@@ -1,5 +1,11 @@
+
 {% extends "base.html" %}
+
 {% block content %}
+
+             <a href="{% url 'profile' %}">
+             <button type="button">Profile</button>
+                </a>
 <h2>Welcome, {{ user.first_name|default:user.username }}!</h2>
 <ul>
     <li>Role: {{ user.get_role_display }}</li>

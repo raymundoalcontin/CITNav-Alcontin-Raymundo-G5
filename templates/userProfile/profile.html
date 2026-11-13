@@ -1,0 +1,24 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<h2>My Profile</h2>
+
+<h3>Account Information</h3>
+
+<p><strong>Username:</strong> {{ user.username }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+<p><strong>First Name:</strong> {{ user.first_name }}</p>
+<p><strong>Last Name:</strong> {{ user.last_name }}</p>
+
+<h3>Student Information</h3>
+
+<p><strong>Role:</strong> {{ user.get_role_display }}</p>
+<p><strong>Course:</strong> {{ user.course|default:"Not set" }}</p>
+
+<p><strong>Date Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+
+<a href="{% url 'dashboard' %}">
+    <button>Back</button>
+</a>
+{% endblock %}
