@@ -2,6 +2,12 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin, UserPassesTestMixin)
 from django.views.generic import TemplateView
 from accounts.models import CustomUser
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def home(request):
+    return render(request, "dashboard/home.html")
 
 
 class AdminPanelView(LoginRequiredMixin,
