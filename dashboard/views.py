@@ -1,22 +1,22 @@
+
 from django.contrib.auth.mixins import (
-    LoginRequiredMixin, UserPassesTestMixin)
+    LoginRequiredMixin, UserPassesTestMixin
+)
 from django.views.generic import TemplateView
 from accounts.models import CustomUser
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
-@login_required
-def home(request):
-    return render(request, "dashboard/home.html")
 
 
 class AdminPanelView(LoginRequiredMixin,
-                    UserPassesTestMixin, TemplateView):
+                     UserPassesTestMixin, TemplateView):
     template_name = "dashboard/admin_panel.html"
 
     def test_func(self):
         user = self.request.user
-        return user.role == CustomUser.Role.ADMIN
+
+        return (
+            user.is_superuser or
+            user.role == CustomUser.Role.ADMIN
+        )
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -24,7 +24,12 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
+
         context["member_count"] = CustomUser.objects.count()
         context["is_admin"] = (
-            self.request.user.role == CustomUser.Role.ADMIN)
+            user.is_superuser or
+            user.role == CustomUser.Role.ADMIN
+        )
+
         return context
