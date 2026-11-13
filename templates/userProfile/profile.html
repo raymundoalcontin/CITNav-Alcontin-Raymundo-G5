@@ -8,7 +8,8 @@
     <h2>My Profile</h2>
 
     <!-- VIEW MODE -->
-    <div id="viewMode">
+    <div id="viewMode"
+         {% if form.errors %}style="display: none;"{% endif %}>
 
         <h3>Account Information</h3>
 
@@ -22,7 +23,6 @@
         <p><strong>Role:</strong> {{ user.get_role_display }}</p>
         <p><strong>Course:</strong> {{ user.course|default:"Not set" }}</p>
         <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
-
         <p><strong>Contact Number:</strong> {{ user.contact_number|default:"Not set" }}</p>
 
         {% if user.profile_picture %}
@@ -31,7 +31,7 @@
                  class="rounded-circle"
                  style="object-fit: cover;">
         {% else %}
-            <img src="{% static 'images/default-profile.png' %}"
+            <img src="{% static 'images/profile.jpg' %}"
                  width="120" height="120"
                  class="rounded-circle"
                  style="object-fit: cover;">
@@ -50,13 +50,9 @@
 
     </div>
 
-
     <!-- EDIT MODE -->
-            {% if form.errors %}
-                <div id="editMode">
-            {% else %}
-                <div id="editMode" style="display: none;">
-            {% endif %}
+    <div id="editMode"
+         {% if not form.errors %}style="display: none;"{% endif %}>
 
         <h3>Edit Profile Information</h3>
 
