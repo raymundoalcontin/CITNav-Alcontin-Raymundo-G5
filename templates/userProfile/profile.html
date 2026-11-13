@@ -1,24 +1,104 @@
 
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<h2>My Profile</h2>
+<div class="container mt-4">
 
-<h3>Account Information</h3>
+    <h2>My Profile</h2>
 
-<p><strong>Username:</strong> {{ user.username }}</p>
-<p><strong>Email:</strong> {{ user.email }}</p>
-<p><strong>First Name:</strong> {{ user.first_name }}</p>
-<p><strong>Last Name:</strong> {{ user.last_name }}</p>
+    <!-- VIEW MODE -->
+    <div id="viewMode">
 
-<h3>Student Information</h3>
+        <h3>Account Information</h3>
 
-<p><strong>Role:</strong> {{ user.get_role_display }}</p>
-<p><strong>Course:</strong> {{ user.course|default:"Not set" }}</p>
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>First Name:</strong> {{ user.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ user.last_name }}</p>
 
-<p><strong>Date Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+        <h3>Student Information</h3>
 
-<a href="{% url 'dashboard' %}">
-    <button>Back</button>
-</a>
+        <p><strong>Role:</strong> {{ user.get_role_display }}</p>
+        <p><strong>Course:</strong> {{ user.course|default:"Not set" }}</p>
+        <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+
+        <p><strong>Contact Number:</strong> {{ user.contact_number|default:"Not set" }}</p>
+
+        {% if user.profile_picture %}
+            <img src="{{ user.profile_picture.url }}"
+                 width="120" height="120"
+                 class="rounded-circle"
+                 style="object-fit: cover;">
+        {% else %}
+            <img src="{% static 'images/default-profile.png' %}"
+                 width="120" height="120"
+                 class="rounded-circle"
+                 style="object-fit: cover;">
+        {% endif %}
+
+        <br><br>
+
+        <button type="button" class="btn btn-primary"
+                onclick="enableEdit()">
+            Edit
+        </button>
+
+        <a href="{% url 'dashboard' %}">
+            <button type="button" class="btn btn-secondary">Back</button>
+        </a>
+
+    </div>
+
+
+    <!-- EDIT MODE -->
+            {% if form.errors %}
+                <div id="editMode">
+            {% else %}
+                <div id="editMode" style="display: none;">
+            {% endif %}
+
+        <h3>Edit Profile Information</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+
+                    {{ field }}
+
+                    {% for error in field.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-success">
+                Save Changes
+            </button>
+
+            <button type="button" class="btn btn-secondary"
+                    onclick="cancelEdit()">
+                Cancel
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+    function enableEdit() {
+        document.getElementById("viewMode").style.display = "none";
+        document.getElementById("editMode").style.display = "block";
+    }
+
+    function cancelEdit() {
+        document.getElementById("viewMode").style.display = "block";
+        document.getElementById("editMode").style.display = "none";
+    }
+</script>
+
 {% endblock %}
