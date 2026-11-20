@@ -1,0 +1,25 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+nav {
+    padding: 15px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f4f4f4;
+}
+
+nav form {
+    margin: 0;
+}
+
+main {
+    padding: 25px;
+}

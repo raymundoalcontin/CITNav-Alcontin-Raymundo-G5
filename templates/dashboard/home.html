@@ -1,19 +1,63 @@
 
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard | CampusConnect{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard/home.css' %}">
+{% endblock %}
 
 {% block content %}
+<div class="dashboard-container">
 
-             <a href="{% url 'profile' %}">
-             <button type="button">Profile</button>
-                </a>
-<h2>Welcome, {{ user.first_name|default:user.username }}!</h2>
-<ul>
-    <li>Role: {{ user.get_role_display }}</li>
-    <li>Course: {{ user.course|default:"Not set" }}</li>
-    <li>Members: {{ member_count }}</li>
-    <li>Last login: {{ user.last_login|date:"M d, Y" }}</li>
-</ul>
-{% if is_admin %}
-    <a href="{% url 'admin_panel' %}">Open admin panel</a>
-{% endif %}
+    <div class="dashboard-header">
+        <div>
+            <h2>Welcome, {{ user.first_name|default:user.username }}!</h2>
+            <p>Here's an overview of your CampusConnect account.</p>
+        </div>
+
+        <a href="{% url 'profile' %}" class="profile-button">
+            View Profile
+        </a>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card">
+            <span class="card-label">Your Role</span>
+            <h3>{{ user.get_role_display }}</h3>
+        </div>
+
+        <div class="dashboard-card">
+            <span class="card-label">Course</span>
+            <h3>{{ user.course|default:"Not set" }}</h3>
+        </div>
+
+        <div class="dashboard-card">
+            <span class="card-label">Members</span>
+            <h3>{{ member_count }}</h3>
+        </div>
+
+        <div class="dashboard-card">
+            <span class="card-label">Last Login</span>
+            <h3>{{ user.last_login|date:"M d, Y"|default:"First login" }}</h3>
+        </div>
+
+    </div>
+
+    {% if is_admin %}
+        <div class="admin-section">
+            <div>
+                <h3>Admin Access</h3>
+                <p>Manage and monitor CampusConnect members.</p>
+            </div>
+
+            <a href="{% url 'admin_panel' %}" class="admin-button">
+                Open Admin Panel
+            </a>
+        </div>
+    {% endif %}
+
+</div>
 {% endblock %}

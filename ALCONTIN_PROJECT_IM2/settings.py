@@ -137,8 +137,12 @@ STATICFILES_DIRS = [
 ]
 
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR 
+
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+
 
 MAILERS = {
     'default': {
@@ -149,3 +153,4 @@ MAILERS = {
 AUTH_USER_MODEL = "accounts.CustomUser"
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
+

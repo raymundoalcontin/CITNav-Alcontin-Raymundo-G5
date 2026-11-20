@@ -1,0 +1,230 @@
+
+/* PROFILE PAGE */
+.profile-page {
+    max-width: 1100px;
+    margin: 35px auto;
+    padding: 0 20px;
+    color: #263445;
+}
+
+.profile-header {
+    margin-bottom: 25px;
+}
+
+.profile-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.profile-header p {
+    color: #7b8794;
+    margin: 0;
+}
+
+/* MAIN LAYOUT */
+.profile-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+.profile-card,
+.info-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+    border: 1px solid #edf0f4;
+}
+
+/* PROFILE CARD */
+.profile-card {
+    text-align: center;
+}
+
+.profile-picture {
+    width: 135px;
+    height: 135px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #eef3ff;
+    margin-bottom: 15px;
+}
+
+.profile-card h3 {
+    font-size: 21px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.profile-email {
+    color: #7b8794;
+    font-size: 14px;
+    word-break: break-word;
+}
+
+.role-badge {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 6px 15px;
+    border-radius: 20px;
+    background: #eaf1ff;
+    color: #315fbd;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.profile-card hr {
+    border: 0;
+    border-top: 1px solid #edf0f4;
+    margin: 22px 0;
+}
+
+.student-detail {
+    text-align: left;
+    margin-bottom: 17px;
+}
+
+.student-detail small,
+.info-item small {
+    display: block;
+    color: #8994a2;
+    margin-bottom: 6px;
+}
+
+.student-detail strong,
+.info-item strong {
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* ACCOUNT INFORMATION */
+.section-title {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 22px;
+    color: #263445;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.info-item {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.info-item strong {
+    font-size: 15px;
+}
+
+/* BUTTONS */
+.profile-actions,
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+}
+
+.profile-actions button,
+.profile-actions a,
+.form-actions button {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.edit-button {
+    background: #315fbd;
+    color: white;
+    border: none;
+}
+
+.edit-button:hover {
+    background: #244b99;
+}
+
+.back-button,
+.cancel-button {
+    background: #edf0f4;
+    color: #445064;
+    border: none;
+}
+
+.back-button:hover,
+.cancel-button:hover {
+    background: #dfe4eb;
+}
+
+/* EDIT FORM */
+.edit-description {
+    color: #8994a2;
+    font-size: 14px;
+    margin-top: -12px;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid #dce2e9;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #315fbd;
+    box-shadow: 0 0 0 3px rgba(49, 95, 189, 0.1);
+}
+
+.field-error {
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.save-button {
+    background: #198754;
+    color: white;
+    border: none;
+}
+
+.save-button:hover {
+    background: #146c43;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 750px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}

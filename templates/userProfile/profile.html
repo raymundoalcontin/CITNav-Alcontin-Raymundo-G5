@@ -2,91 +2,161 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}My Profile | CampusConnect{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/userProfile/profile.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
+<div class="profile-page">
 
-    <h2>My Profile</h2>
-
-    <!-- VIEW MODE -->
-    <div id="viewMode">
-
-        <h3>Account Information</h3>
-
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p><strong>First Name:</strong> {{ user.first_name }}</p>
-        <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-
-        <h3>Student Information</h3>
-
-        <p><strong>Role:</strong> {{ user.get_role_display }}</p>
-        <p><strong>Course:</strong> {{ user.course|default:"Not set" }}</p>
-        <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
-
-        <p><strong>Contact Number:</strong> {{ user.contact_number|default:"Not set" }}</p>
-
-        {% if user.profile_picture %}
-            <img src="{{ user.profile_picture.url }}"
-                 width="120" height="120"
-                 class="rounded-circle"
-                 style="object-fit: cover;">
-        {% else %}
-            <img src="{% static 'images/profile.jpg' %}"
-                 width="120" height="120"
-                 class="rounded-circle"
-                 style="object-fit: cover;">
-        {% endif %}
-
-        <br><br>
-
-        <button type="button" class="btn btn-primary"
-                onclick="enableEdit()">
-            Edit
-        </button>
-
-        <a href="{% url 'dashboard' %}">
-            <button type="button" class="btn btn-secondary">Back</button>
-        </a>
-
+    <div class="profile-header">
+        <h2>My Profile</h2>
+        <p>Manage your account and student information.</p>
     </div>
 
+    <div class="profile-layout">
 
-    <!-- EDIT MODE -->
-            {% if form.errors %}
-                <div id="editMode">
+        <!-- LEFT: PROFILE CARD -->
+        <div class="profile-card">
+
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" class="profile-picture" alt="Profile Picture">
             {% else %}
-                <div id="editMode" style="display: none;">
+                <img src="{% static 'images/profile.jpg' %}" class="profile-picture" alt="Default Profile Picture">
             {% endif %}
 
-        <h3>Edit Profile Information</h3>
+            <h3>{{ user.get_full_name|default:user.username }}</h3>
+            <p class="profile-email">{{ user.email }}</p>   
 
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
+            <span class="role-badge">{{ user.get_role_display }}</span>
 
-            {% for field in form %}
-                <div class="mb-3">
-                    <label class="form-label">{{ field.label }}</label>
+            <hr>
 
-                    {{ field }}
+            <div class="student-detail">
+                <small>Course</small>
+                <strong>{{ user.course|default:"Not set" }}</strong>
+            </div>
 
-                    {% for error in field.errors %}
-                        <div class="text-danger">{{ error }}</div>
-                    {% endfor %}
+            <div class="student-detail">
+                <small>Contact Number</small>
+                <strong>{{ user.contact_number|default:"Not set" }}</strong>
+            </div>
+
+            <div class="student-detail">
+                <small>Date Joined</small>
+                <strong>{{ user.date_joined|date:"F d, Y" }}</strong>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: INFORMATION CARD -->
+        <div class="info-card">
+
+            <!-- VIEW MODE -->
+            <div id="viewMode" {% if form.errors %}style="display: none;"{% endif %}>
+
+                <h3 class="section-title">Account Information</h3>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <small>Username</small>
+                        <strong>{{ user.username }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <small>Email Address</small>
+                        <strong>{{ user.email|default:"Not set" }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <small>First Name</small>
+                        <strong>{{ user.first_name|default:"Not set" }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <small>Last Name</small>
+                        <strong>{{ user.last_name|default:"Not set" }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <small>Role</small>
+                        <strong>{{ user.get_role_display }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <small>Course</small>
+                        <strong>{{ user.course|default:"Not set" }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <small>Contact Number</small>
+                        <strong>{{ user.contact_number|default:"Not set" }}</strong>
+                    </div>
+
+                    <div class="info-item">
+                        <small>Date Joined</small>
+                        <strong>{{ user.date_joined|date:"F d, Y" }}</strong>
+                    </div>
+
                 </div>
-            {% endfor %}
 
-            <button type="submit" class="btn btn-success">
-                Save Changes
-            </button>
+                <div class="profile-actions">
+                    <button type="button" class="edit-button" onclick="enableEdit()">
+                        Edit Profile
+                    </button>
 
-            <button type="button" class="btn btn-secondary"
-                    onclick="cancelEdit()">
-                Cancel
-            </button>
-        </form>
+                    <a href="{% url 'dashboard' %}" class="back-button">
+                        Back
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- EDIT MODE -->
+            <div id="editMode" {% if not form.errors %}style="display: none;"{% endif %}>
+
+                <h3 class="section-title">Edit Profile Information</h3>
+                <p class="edit-description">Update your personal and student information below.</p>
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        <div class="form-group">
+
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% for error in field.errors %}
+                                <div class="field-error">{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+                    {% endfor %}
+
+                    <div class="form-actions">
+                        <button type="submit" class="save-button">
+                            Save Changes
+                        </button>
+
+                        <button type="button" class="cancel-button" onclick="cancelEdit()">
+                            Cancel
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
 
     </div>
-
 </div>
 
 <script>
