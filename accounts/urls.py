@@ -7,7 +7,12 @@ urlpatterns = [
     path("signup/", SignUpView.as_view(),
         name="signup"),
 
-    path("login/", CustomLoginView.as_view(
-        template_name="registration/login.html"
-    ), name="login"),
+     path(
+        "login/",
+        CustomLoginView.as_view(
+            template_name="registration/login.html",
+            redirect_authenticated_user=True
+        ),
+        name="login"
+    ),
 ]
