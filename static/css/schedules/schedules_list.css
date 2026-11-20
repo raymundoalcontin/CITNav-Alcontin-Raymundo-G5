@@ -1,0 +1,29 @@
+.schedule-container {
+    padding: 30px;
+}
+
+.schedule-container h2 {
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.schedule-container p {
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+.create-schedule-button {
+    padding: 11px 20px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.create-schedule-button:hover {
+    background-color: #1d4ed8;
+}

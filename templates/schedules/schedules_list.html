@@ -1,0 +1,24 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Schedules | CampusConnect{% endblock %}
+
+{% block content %}
+
+<div class="schedule-container">
+
+    <h2>My Schedules</h2>
+
+    {% if schedules %}
+        {% include "schedules/schedule_table.html" %}
+    {% else %}
+        <p>You don't have any schedules yet.</p>
+    {% endif %}
+
+    <a href="{% url 'create_schedule' %}" class="create-schedule-button">
+        + Create a Schedule
+    </a>
+
+</div>
+
+{% endblock %}
