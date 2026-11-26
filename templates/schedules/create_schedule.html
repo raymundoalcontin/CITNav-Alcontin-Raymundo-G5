@@ -1,0 +1,106 @@
+
+{% extends "base.html" %}
+
+{% block title %}Create Schedule | CampusConnect{% endblock %}
+
+{% block content %}
+
+<div class="schedule-container">
+
+    <a href="{% url 'schedule_list' %}" class="back-button">
+        &larr; Back to Schedule List
+    </a>
+
+    <h2>Your Class Schedules</h2>
+    <p>Here are your currently saved schedules.</p>
+
+    <!-- Reusable Schedule Table -->
+    {% include "schedules/schedule_table.html" %}
+
+    <hr>
+
+    <!-- Schedule Adder -->
+    <h2>Create Your Schedule</h2>
+    <p>Add your class information below.</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div id="schedule-forms">
+
+            <div class="schedule-form">
+
+                <h3>Class Schedule 1</h3>
+
+                <label>Subject Name</label>
+                <input type="text" name="subject_name" required>
+
+                <label>Subject Code</label>
+                <input type="text" name="subject_code" required>
+
+                <label>Building</label>
+                <input type="text" name="building" required>
+
+                <label>Room</label>
+                <input type="text" name="room" required>
+
+                <label>Day</label>
+                <select name="day_of_week" required>
+                    <option value="">Select a day</option>
+                    <option value="MON">Monday</option>
+                    <option value="TUE">Tuesday</option>
+                    <option value="WED">Wednesday</option>
+                    <option value="THU">Thursday</option>
+                    <option value="FRI">Friday</option>
+                    <option value="SAT">Saturday</option>
+                    <option value="SUN">Sunday</option>
+                </select>
+
+                <label>Start Time</label>
+                <input type="time" name="start_time" required>
+
+                <label>End Time</label>
+                <input type="time" name="end_time" required>
+
+            </div>
+
+        </div>
+
+        <button type="button" id="add-schedule">
+            + Add Schedule
+        </button>
+
+        <button type="submit">
+            Complete
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+    const scheduleForms = document.getElementById('schedule-forms');
+    const addButton = document.getElementById('add-schedule');
+
+    addButton.addEventListener('click', function () {
+
+        const originalForm = document.querySelector('.schedule-form');
+        const newForm = originalForm.cloneNode(true);
+
+        const scheduleCount = scheduleForms.children.length + 1;
+
+        newForm.querySelector('h3').textContent =
+            `Class Schedule ${scheduleCount}`;
+
+        newForm.querySelectorAll('input').forEach(input => {
+            input.value = '';
+        });
+
+        newForm.querySelector('select').selectedIndex = 0;
+
+        scheduleForms.appendChild(newForm);
+
+    });
+</script>
+
+{% endblock %}

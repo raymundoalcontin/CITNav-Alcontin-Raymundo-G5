@@ -1,0 +1,38 @@
+
+{% if schedules %}
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Subject Name</th>
+                <th>Subject Code</th>
+                <th>Building</th>
+                <th>Room</th>
+                <th>Day</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for schedule in schedules %}
+            <tr>
+                <td>{{ schedule.subject_name }}</td>
+                <td>{{ schedule.subject_code }}</td>
+                <td>{{ schedule.building }}</td>
+                <td>{{ schedule.room }}</td>
+                <td>{{ schedule.get_day_of_week_display }}</td>
+                <td>{{ schedule.start_time|time:"h:i A" }}</td>
+                <td>{{ schedule.end_time|time:"h:i A" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+
+<p>You don't have any schedules yet.</p>
+
+{% endif %}
