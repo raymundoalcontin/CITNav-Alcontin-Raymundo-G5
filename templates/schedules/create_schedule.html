@@ -1,12 +1,13 @@
-
 {% extends "base.html" %}
 {% load static %}
 
 {% block title %}Create Schedule | CampusConnect{% endblock %}
 
-{% block content %}
-
+{% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/schedules/create_schedule.css' %}">
+{% endblock %}
+
+{% block content %}
 
 <div class="schedule-container">
 
@@ -17,7 +18,9 @@
     <h2>Your Class Schedules</h2>
     <p>Here are your currently saved schedules.</p>
 
-    {% include "schedules/schedule_table.html" %}
+    <div class="schedule-table-wrapper">
+        {% include "schedules/schedule_table.html" %}
+    </div>
 
     <hr>
 

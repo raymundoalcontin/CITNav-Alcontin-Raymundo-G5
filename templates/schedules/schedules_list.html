@@ -1,7 +1,11 @@
-
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}My Schedules | CampusConnect{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/schedules/schedules_list.css' %}">
+{% endblock %}
 
 {% block content %}
 
@@ -16,7 +20,8 @@
     {% endif %}
 
     <a href="{% url 'create_schedule' %}" class="create-schedule-button">
-        + Create a Schedule
+        <span class="btn-icon">+</span>
+        <span>Create a Schedule</span>
     </a>
 
 </div>

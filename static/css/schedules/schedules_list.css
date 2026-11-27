@@ -1,29 +1,39 @@
-.schedule-container {
-    padding: 30px;
-}
-
-.schedule-container h2 {
-    color: #1f2937;
-    margin-bottom: 10px;
-}
-
-.schedule-container p {
-    color: #6b7280;
-    margin-bottom: 20px;
-}
-
 .create-schedule-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
     padding: 11px 20px;
-    background-color: #2563eb;
-    color: white;
-    border: none;
+    background: #2563eb;
+    color: #ffffff;
+    text-decoration: none;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
 }
 
 .create-schedule-button:hover {
-    background-color: #1d4ed8;
+    background: #1d4ed8;
+    box-shadow: 0 4px 8px rgba(29, 78, 216, 0.25);
+}
+
+.create-schedule-button:active {
+    transform: scale(0.98);
+}
+
+.create-schedule-button .btn-icon {
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .create-schedule-button {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
