@@ -5,11 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from datetime import datetime
 
-from .models import Schedule
+from .models import Schedule, Building, Room
 
 
 @login_required
 def schedule_list(request):
+
     schedules = Schedule.objects.filter(
         user=request.user
     ).order_by('day_of_week', 'start_time')
@@ -28,8 +29,8 @@ def create_schedule(request):
 
         subject_names = request.POST.getlist('subject_name')
         subject_codes = request.POST.getlist('subject_code')
-        rooms = request.POST.getlist('room')
-        buildings = request.POST.getlist('building')
+        room_ids = request.POST.getlist('room')
+        building_ids = request.POST.getlist('building')
         days = request.POST.getlist('day_of_week')
         start_times = request.POST.getlist('start_time')
         end_times = request.POST.getlist('end_time')
@@ -37,20 +38,23 @@ def create_schedule(request):
         field_lists = [
             subject_names,
             subject_codes,
-            rooms,
-            buildings,
+            room_ids,
+            building_ids,
             days,
             start_times,
             end_times
         ]
 
         try:
+
             # Check if all fields have matching entries
             if not subject_names or any(
                 len(field) != len(subject_names)
                 for field in field_lists
             ):
-                raise ValueError("Please complete all schedule fields.")
+                raise ValueError(
+                    "Please complete all schedule fields."
+                )
 
             new_schedules = []
 
@@ -60,13 +64,25 @@ def create_schedule(request):
                 if not all([
                     subject_names[i].strip(),
                     subject_codes[i].strip(),
-                    rooms[i].strip(),
-                    buildings[i].strip(),
+                    room_ids[i],
+                    building_ids[i],
                     days[i],
                     start_times[i],
                     end_times[i]
                 ]):
-                    raise ValueError("Please complete all fields.")
+                    raise ValueError(
+                        "Please complete all fields."
+                    )
+
+                # Get selected building and room
+                building = Building.objects.get(
+                    id=building_ids[i]
+                )
+
+                room = Room.objects.get(
+                    id=room_ids[i],
+                    building=building
+                )
 
                 # Convert time strings into time objects
                 start_time = datetime.strptime(
@@ -114,8 +130,7 @@ def create_schedule(request):
                 new_schedules.append({
                     'subject_name': subject_names[i],
                     'subject_code': subject_codes[i],
-                    'room': rooms[i],
-                    'building': buildings[i],
+                    'room': room,
                     'day_of_week': days[i],
                     'start_time': start_time,
                     'end_time': end_time
@@ -138,17 +153,50 @@ def create_schedule(request):
 
             return redirect('create_schedule')
 
-        except (ValueError, IndexError) as error:
+        except (
+            ValueError,
+            IndexError,
+            Building.DoesNotExist,
+            Room.DoesNotExist
+        ) as error:
 
-            messages.error(request, str(error))
+            if isinstance(
+                error,
+                (Building.DoesNotExist, Room.DoesNotExist)
+            ):
+                messages.error(
+                    request,
+                    "Invalid building or room selected."
+                )
+            else:
+                messages.error(
+                    request,
+                    str(error)
+                )
 
     # Retrieve existing schedules
     schedules = Schedule.objects.filter(
         user=request.user
     ).order_by('day_of_week', 'start_time')
 
+    # Retrieve buildings and rooms for dropdowns
+    buildings = Building.objects.all().order_by(
+        'building_name'
+    )
+
+    rooms = Room.objects.select_related(
+        'building'
+    ).all().order_by(
+        'building__building_name',
+        'room_number'
+    )
+
     return render(
         request,
         'schedules/create_schedule.html',
-        {'schedules': schedules}
+        {
+            'schedules': schedules,
+            'buildings': buildings,
+            'rooms': rooms
+        }
     )
