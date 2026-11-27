@@ -1,3 +1,5 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/schedules/schedule_table.css' %}">
 
 {% if schedules %}
 
@@ -18,13 +20,13 @@
         <tbody>
             {% for schedule in schedules %}
             <tr>
-                <td>{{ schedule.subject_name }}</td>
-                <td>{{ schedule.subject_code }}</td>
-                <td>{{ schedule.building }}</td>
-                <td>{{ schedule.room }}</td>
-                <td>{{ schedule.get_day_of_week_display }}</td>
-                <td>{{ schedule.start_time|time:"h:i A" }}</td>
-                <td>{{ schedule.end_time|time:"h:i A" }}</td>
+                <td class="col-subject">{{ schedule.subject_name }}</td>
+                <td class="col-code">{{ schedule.subject_code }}</td>
+                <td class="col-building">{{ schedule.building }}</td>
+                <td class="col-room">{{ schedule.room }}</td>
+                <td class="col-day">{{ schedule.get_day_of_week_display }}</td>
+                <td class="col-time">{{ schedule.start_time|time:"h:i A" }}</td>
+                <td class="col-time">{{ schedule.end_time|time:"h:i A" }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -33,6 +35,6 @@
 
 {% else %}
 
-<p>You don't have any schedules yet.</p>
+<p class="empty-message">You don't have any schedules yet.</p>
 
 {% endif %}
