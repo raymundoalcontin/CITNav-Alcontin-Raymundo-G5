@@ -1,16 +1,15 @@
-
-from django.shortcuts import render, redirect
+from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
-from datetime import datetime
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction
+from django.shortcuts import redirect, render
 
-from .models import Schedule, Building, Room
+from .models import Building, Room, Schedule
 
 
 @login_required
 def schedule_list(request):
-
     schedules = Schedule.objects.filter(
         user=request.user
     ).order_by('day_of_week', 'start_time')
@@ -24,9 +23,7 @@ def schedule_list(request):
 
 @login_required
 def create_schedule(request):
-
     if request.method == 'POST':
-
         subject_names = request.POST.getlist('subject_name')
         subject_codes = request.POST.getlist('subject_code')
         room_ids = request.POST.getlist('room')
@@ -42,25 +39,18 @@ def create_schedule(request):
             building_ids,
             days,
             start_times,
-            end_times
+            end_times,
         ]
 
         try:
-
-            # Check if all fields have matching entries
             if not subject_names or any(
-                len(field) != len(subject_names)
-                for field in field_lists
+                len(field) != len(subject_names) for field in field_lists
             ):
-                raise ValueError(
-                    "Please complete all schedule fields."
-                )
+                raise ValueError("Please complete all schedule fields.")
 
             new_schedules = []
 
-            # Validate each submitted schedule
             for i in range(len(subject_names)):
-
                 if not all([
                     subject_names[i].strip(),
                     subject_codes[i].strip(),
@@ -68,44 +58,34 @@ def create_schedule(request):
                     building_ids[i],
                     days[i],
                     start_times[i],
-                    end_times[i]
+                    end_times[i],
                 ]):
-                    raise ValueError(
-                        "Please complete all fields."
-                    )
+                    raise ValueError("Please complete all fields.")
 
-                # Get selected building and room
-                building = Building.objects.get(
-                    id=building_ids[i]
-                )
+                building = Building.objects.get(id=int(building_ids[i]))
+                room = Room.objects.get(id=int(room_ids[i]), building=building)
 
-                room = Room.objects.get(
-                    id=room_ids[i],
-                    building=building
-                )
-
-                # Convert time strings into time objects
                 start_time = datetime.strptime(
-                    start_times[i], '%H:%M'
+                    start_times[i].strip(), '%H:%M'
                 ).time()
-
                 end_time = datetime.strptime(
-                    end_times[i], '%H:%M'
+                    end_times[i].strip(), '%H:%M'
                 ).time()
 
-                # Check start and end time
                 if end_time <= start_time:
                     raise ValueError(
                         f"Invalid time for {subject_names[i]}. "
                         "Start time must be earlier than end time."
                     )
 
-                # Check conflicts with existing schedules
+                day_value = days[i].strip()
+
+                # Check conflicts with existing schedules for this user
                 conflict = Schedule.objects.filter(
                     user=request.user,
-                    day_of_week=days[i],
+                    day_of_week=day_value,
                     start_time__lt=end_time,
-                    end_time__gt=start_time
+                    end_time__gt=start_time,
                 ).exists()
 
                 if conflict:
@@ -113,11 +93,10 @@ def create_schedule(request):
                         f"{subject_names[i]} conflicts with an existing schedule."
                     )
 
-                # Check conflicts with other submitted schedules
+                # Check conflicts with other schedules in the same submission
                 for other in new_schedules:
-
                     if (
-                        other['day_of_week'] == days[i]
+                        other['day_of_week'] == day_value
                         and other['start_time'] < end_time
                         and other['end_time'] > start_time
                     ):
@@ -126,69 +105,54 @@ def create_schedule(request):
                             "submitted schedule."
                         )
 
-                # Store validated schedule temporarily
                 new_schedules.append({
-                    'subject_name': subject_names[i],
-                    'subject_code': subject_codes[i],
+                    'subject_name': subject_names[i].strip(),
+                    'subject_code': subject_codes[i].strip(),
                     'room': room,
-                    'day_of_week': days[i],
+                    'day_of_week': day_value,
                     'start_time': start_time,
-                    'end_time': end_time
+                    'end_time': end_time,
                 })
 
-            # Save schedules only after all pass validation
             with transaction.atomic():
-
                 for schedule in new_schedules:
                     Schedule.objects.create(
                         user=request.user,
                         entry_method=Schedule.EntryMethod.MANUAL,
-                        **schedule
+                        **schedule,
                     )
 
-            messages.success(
-                request,
-                'Your schedules have been saved!'
-            )
-
+            messages.success(request, 'Your schedules have been saved!')
             return redirect('create_schedule')
 
         except (
             ValueError,
+            TypeError,
             IndexError,
+            ValidationError,
+            IntegrityError,
             Building.DoesNotExist,
-            Room.DoesNotExist
+            Room.DoesNotExist,
         ) as error:
-
-            if isinstance(
-                error,
-                (Building.DoesNotExist, Room.DoesNotExist)
-            ):
+            if isinstance(error, (Building.DoesNotExist, Room.DoesNotExist)):
+                messages.error(request, "Invalid building or room selected.")
+            elif isinstance(error, IntegrityError):
                 messages.error(
                     request,
-                    "Invalid building or room selected."
+                    "Unable to save schedule due to a duplicate or conflicting record."
                 )
             else:
-                messages.error(
-                    request,
-                    str(error)
-                )
+                messages.error(request, str(error))
 
-    # Retrieve existing schedules
     schedules = Schedule.objects.filter(
         user=request.user
     ).order_by('day_of_week', 'start_time')
 
-    # Retrieve buildings and rooms for dropdowns
-    buildings = Building.objects.all().order_by(
-        'building_name'
-    )
+    buildings = Building.objects.all().order_by('building_name')
 
-    rooms = Room.objects.select_related(
-        'building'
-    ).all().order_by(
+    rooms = Room.objects.select_related('building').all().order_by(
         'building__building_name',
-        'room_number'
+        'room_number',
     )
 
     return render(
@@ -197,6 +161,6 @@ def create_schedule(request):
         {
             'schedules': schedules,
             'buildings': buildings,
-            'rooms': rooms
-        }
+            'rooms': rooms,
+        },
     )
